@@ -53,8 +53,6 @@ Este projeto foi desenvolvido como parte das atividades acadêmicas na **FIAP**,
 - **Dashboard Web:** Como os dados são exibidos no navegador.
   <img src="./img/dashboard.png" alt="Dashboard Web com dados dos sensores" width="700"/>
 
-> **Nota:** Substitua as URLs de exemplo (`https://i.imgur.com/...`) pelos links das suas próprias imagens.
-
 ---
 
 ## 🛠️ Tecnologias Utilizadas

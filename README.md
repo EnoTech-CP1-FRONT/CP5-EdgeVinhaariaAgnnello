@@ -83,6 +83,15 @@ O fluxo de dados no sistema é o seguinte:
 5.  O Backend envia os dados via **Socket.IO** para o navegador do usuário.
 6.  O **Dashboard Web** (HTML/JavaScript no navegador) exibe os dados em tempo real.
 
+
+# 🌡️💧💡 IoT com ESP32 + MQTT + Flask + Dashboard Web
+
+## 📊 Visão Geral do Projeto
+
+O projeto conecta sensores físicos a um **ESP32**, que envia dados via **MQTT** para um **Backend Python/Flask**, exibindo as leituras em tempo real em um **Dashboard Web**.
+
+### 🔗 Fluxo de Comunicação
+
 ```mermaid
 graph LR;
     Sensores[🌡️💧💡 Sensores DHT/LDR] -->|Leitura| ESP32[💻 ESP32];
@@ -96,167 +105,219 @@ graph LR;
     style BrokerMQTT fill:#fcf,stroke:#333,stroke-width:2px;
     style Backend fill:#ff9,stroke:#333,stroke-width:2px;
     style Dashboard fill:#9cf,stroke:#333,stroke-width:2px;
-🚀 Como Rodar o Projeto (Localmente ou no Wokwi)
+```
+
+## 🚀 Como Rodar o Projeto (Localmente ou no Wokwi)
+
 Siga estas etapas para testar o projeto.
 
-Pré-requisitos
-Para o ESP32 (Hardware Real ou Wokwi):
+---
 
-Hardware: ESP32 Dev Kit, Sensor DHT11 ou DHT22, Módulo LDR, jumpers, protoboard.
+### 🧩 Pré-requisitos
 
-Software (Real): IDE do Arduino instalada com o suporte para ESP32.
+#### Para o ESP32 (Hardware Real ou Wokwi)
 
-Bibliotecas Arduino: PubSubClient, DHT sensor library (Adafruit), ArduinoJson.
+- **Hardware:** ESP32 Dev Kit, Sensor DHT11 ou DHT22, Módulo LDR, jumpers, protoboard.  
+- **Software (Real):** IDE do Arduino instalada com suporte para ESP32.  
+- **Bibliotecas Arduino:**  
+  - PubSubClient  
+  - DHT sensor library (Adafruit)  
+  - ArduinoJson  
+- **Conta Wokwi (Simulação):** Gratuita em [wokwi.com](https://wokwi.com)
 
-Conta Wokwi (Simulação): Gratuita em wokwi.com.
+#### Para o Backend (Python)
 
-Para o Backend (Python):
+- **Python:** versão 3.7+ (baixe em [python.org](https://www.python.org))  
+- **pip:** gerenciador de pacotes do Python (já incluso normalmente)
 
-Python: Instalado na sua máquina (versão 3.7+ recomendada). Baixe em python.org.
+---
 
-pip: Gerenciador de pacotes do Python (geralmente vem junto).
+### 🧪 Opção 1: Simulação com Wokwi (Mais Fácil)
 
-Opção 1: Simulação com Wokwi (Mais Fácil)
-Abra o Wokwi: Crie um novo projeto ESP32.
+1. **Abra o Wokwi:** Crie um novo projeto ESP32.  
+2. **Adicione Componentes:** DHT22 e LDR Module.  
+3. **Faça as Conexões:**
 
-Adicione Componentes: Adicione um DHT22 e um LDR Module ao diagrama.
+   | Componente | Pino ESP32 | Descrição |
+   |-------------|------------|------------|
+   | 3V3 | Linha + | Alimentação positiva |
+   | GND | Linha - | Terra |
+   | DHT22 Data | D15 | Dados de temperatura e umidade |
+   | LDR AO | D35 | Leitura de luminosidade |
 
-Faça as Conexões: Siga o esquema de ligação:
 
-ESP32 3V3 -> Linha + da protoboard
+### Adicione os Arquivos de Configuração:
 
-ESP32 GND -> Linha - da protoboard
-
-DHT22 VCC -> Linha +
-
-DHT22 GND -> Linha -
-
-DHT22 Data -> ESP32 D15
-
-LDR Module VCC -> Linha +
-
-LDR Module GND -> Linha -
-
-LDR Module AO -> ESP32 D35
-
-Adicione os Arquivos de Configuração:
-
-Crie libraries.txt e cole:
-
+libraries.txt
 PubSubClient
 Adafruit Unified Sensor
 DHT sensor library
 ArduinoJson
-Crie wokwi.toml e cole:
-
-Ini, TOML
+wokwi.toml
 
 [wokwi]
 version = 1
-firmware = ".pio/build/esp32dev/firmware.bin" # Ou o caminho padrão do Wokwi
+firmware = ".pio/build/esp32dev/firmware.bin" # ou caminho padrão do Wokwi
 
 [conn]
 type = "wifi"
 ssid = "Wokwi-GUEST"
 password = ""
-Cole o Código ESP32: Copie o código sketch.ino fornecido anteriormente (o que usa Wokwi-GUEST e DHT22) para o editor do Wokwi. Certifique-se que MQTT_BROKER e MQTT_TOPIC estão corretos!
 
-Execute o Backend Python (Veja abaixo).
+### 🧩 Continuação — Simulação no Wokwi
 
-Inicie a Simulação: Clique no botão ▶️ (Play) no Wokwi. Verifique o console serial para mensagens de conexão Wi-Fi e MQTT.
+4. **Cole o Código do ESP32:**  
+   Utilize o arquivo `sketch.ino` fornecido (usando **Wokwi-GUEST** e **DHT22**).  
+   Certifique-se de ajustar as variáveis **`MQTT_BROKER`** e **`MQTT_TOPIC`** corretamente.
 
-Opção 2: Hardware Real
-Monte o Circuito: Conecte o ESP32, DHT11/22 e LDR na protoboard conforme o diagrama.
+5. **Execute o Backend Python** (veja instruções abaixo).  
 
-Abra a IDE Arduino: Cole o código C++ do ESP32 fornecido anteriormente.
+6. **Inicie a Simulação:**  
+   Clique em ▶️ no Wokwi e verifique o console serial confirmando:  
+   - Conexão com Wi-Fi  
+   - Conexão com o Broker MQTT  
 
-Configure: MUITO IMPORTANTE: Altere as variáveis WIFI_SSID, WIFI_PASS, MQTT_BROKER e MQTT_TOPIC no código para corresponderem à sua rede Wi-Fi e ao broker/tópico que o backend Python usará. Se estiver usando DHT11, mude #define DHT_TYPE DHT22 para DHT11.
+---
 
-Instale as Bibliotecas: Use o Gerenciador de Bibliotecas da IDE para instalar PubSubClient, DHT sensor library e ArduinoJson.
+## 🔌 Opção 2: Hardware Real
 
-Compile e Grave: Conecte o ESP32 ao computador, selecione a placa e a porta corretas na IDE e clique em "Carregar".
+1. **Monte o Circuito:**  
+   Conecte o **ESP32**, **DHT11/DHT22** e **LDR** conforme o diagrama do projeto.
 
-Abra o Monitor Serial: Verifique se ele conecta ao Wi-Fi e ao MQTT.
+2. **Abra a IDE Arduino:**
+   - Cole o código C++ do ESP32.  
+   - Altere as variáveis:
+     - `WIFI_SSID`
+     - `WIFI_PASS`
+     - `MQTT_BROKER`
+     - `MQTT_TOPIC`
+   - ⚙️ Se estiver usando **DHT11**, altere:
+     ```cpp
+     #define DHT_TYPE DHT22
+     ```
+     para:
+     ```cpp
+     #define DHT_TYPE DHT11
+     ```
 
-Execute o Backend Python (Veja abaixo).
+3. **Instale as Bibliotecas:**  
+   Pelo **Gerenciador de Bibliotecas** da IDE Arduino:
+   - PubSubClient  
+   - DHT sensor library  
+   - ArduinoJson  
 
-Executando o Backend Python (Comum para Opção 1 e 2)
-Clone o Repositório (se ainda não fez):
+4. **Compile e Grave o Código:**  
+   - Conecte o ESP32 via USB  
+   - Selecione a placa e a porta corretas  
+   - Clique em **“Carregar”**  
 
-Bash
+5. **Abra o Monitor Serial:**  
+   - Verifique se o ESP32 conecta corretamente ao **Wi-Fi** e ao **MQTT**  
 
-git clone URL_DO_SEU_REPOSITORIO # Se aplicável
-cd NOME_DA_PASTA_DO_PROJETO/backend # Ou onde estiver seu script Python
-(Recomendado) Crie um Ambiente Virtual:
+6. **Execute o Backend Python:**  
+   - Siga as instruções da próxima seção para iniciar o backend.
 
-Bash
 
+### 🐍 Executando o Backend Python
+**1️⃣ Clone o Repositório**
+git clone URL_DO_SEU_REPOSITORIO
+cd NOME_DA_PASTA_DO_PROJETO/backend
+
+**2️⃣ (Opcional) Crie um Ambiente Virtual**
 python -m venv .venv
-# Ativação Windows (Git Bash/PowerShell):
+# Ativação Windows:
 source .venv/Scripts/activate
-# Ativação Linux/macOS:
+# Linux/macOS:
 # source .venv/bin/activate
-Instale as Dependências Python:
 
-Bash
-
+**3️⃣ Instale as Dependências**
 pip install Flask Flask-SocketIO paho-mqtt
-Verifique o Script Python: Abra o script (listener.py ou similar) e confirme que MQTT_BROKER e MQTT_TOPIC são exatamente os mesmos que você configurou no código do ESP32.
 
-Execute o Script:
+**4️⃣ Verifique o Script Python**
+Abra listener.py e confirme que MQTT_BROKER e MQTT_TOPIC estão iguais aos do ESP32.
 
-Bash
-
+**5️⃣ Execute o Script**
 python listener.py
-O terminal deve indicar que está conectado ao MQTT e aguardando mensagens.
 
-Acessando o Dashboard
-Com o script Python rodando, abra seu navegador web.
 
-Acesse o endereço http://127.0.0.1:5000 (ou o endereço que aparece no terminal do Python, como http://0.0.0.0:5000/).
+## 🧭 Acessando o Dashboard
 
-Você deverá ver o dashboard com os valores de Temperatura, Umidade e Luminosidade (%) sendo atualizados a cada ~10 segundos.
+Com o **backend** rodando, abra no navegador:
 
-📡 Tópico MQTT Principal
-fiap/vinheria/dados (ou o tópico que você definiu): O ESP32 publica as leituras dos sensores neste tópico em formato JSON. O Backend Python subscreve a este tópico para receber os dados.
+👉 [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
-Exemplo de Payload JSON enviado pelo ESP32:
+Você verá o **dashboard** exibindo em tempo real os valores de:
+- 🌡️ **Temperatura**
+- 💧 **Umidade**
+- 💡 **Luminosidade (%)**
 
-JSON
+Os dados são atualizados aproximadamente a cada **10 segundos**.
 
-{"temp": 22.5, "hum": 55.1, "lum": 75, "ts": "2025-10-21T19:30:00Z"}
-⚠️ Solução de Problemas Comuns
-ESP32 não conecta ao Wi-Fi: Verifique se WIFI_SSID e WIFI_PASS no código do ESP32 estão corretos. Verifique se o ESP32 está ao alcance do roteador.
+---
 
-ESP32 não conecta ao MQTT / Backend Python não conecta (TimeoutError):
+## 📡 Tópico MQTT Principal
 
-Confirme que MQTT_BROKER (IP ou hostname) e MQTT_PORT (geralmente 1883) estão idênticos no ESP32 e no Python.
+fiap/vinheria/dados
 
-Verifique se o Broker MQTT está online (tente conectar com um cliente MQTT de teste como MQTT Explorer).
 
-Seu firewall (Windows ou da rede) pode estar bloqueando a porta 1883. Tente desativar temporariamente para testar.
+### 📦 Exemplo de Payload JSON enviado pelo ESP32
 
-Backend Python não recebe mensagens:
+```json
+{
+  "temp": 22.5,
+  "hum": 55.1,
+  "lum": 75,
+  "ts": "2025-10-21T19:30:00Z"
+}
 
-Confirme que MQTT_TOPIC é exatamente o mesmo no ESP32 (onde publica) e no Python (onde subscreve). Atenção a maiúsculas/minúsculas e barras (/).
-
-Verifique se o ESP32 está realmente enviando mensagens (olhe o Monitor Serial do Arduino ou o console do Wokwi).
-
-Dashboard não atualiza:
-
-Verifique se o Backend Python está recebendo mensagens MQTT (olhe o terminal do Python).
-
-Verifique o console do navegador (F12) por erros de JavaScript ou de conexão Socket.IO.
-
-Luminosidade não aparece em %: Certifique-se de que o código do ESP32 inclui a linha com ldr_percent = map(ldr_value_raw, 0, 4095, 0, 100); e que o JSON enviado contém "lum": ldr_percent.
-
-👨‍💻 Desenvolvedor / Contato
-Gabriel Akira Borges Kiyohara — FIAP (1ESPJ)
-
-Contato: gakirakiyohara@gmail.com
-
-GitHub: Gakira06 (adicione seu link se quiser)
-
-📄 Licença
-Este projeto foi desenvolvido para fins acadêmicos. Uso e modificação são permitidos dentro deste contexto. Distribuição ou uso comercial não autorizado é proibido. © 2025 Gabriel Akira Borges Kiyohara.
 ```
+
+# ⚠️ Solução de Problemas Comuns
+
+## 🚫 ESP32 não conecta ao Wi-Fi
+- Verifique `WIFI_SSID` e `WIFI_PASS`.
+- Confirme se o ESP32 está dentro do alcance do roteador.
+
+## 🚫 MQTT Timeout
+- Confira `MQTT_BROKER` e `MQTT_PORT` (geralmente 1883).
+- Verifique se o Broker MQTT está online (pode usar o **MQTT Explorer**).
+- Desative temporariamente o firewall para teste.
+
+## 🚫 Backend não recebe mensagens
+- Confirme se o `MQTT_TOPIC` é idêntico no ESP32 e no Python.
+- Veja o console serial do ESP32 para confirmar o envio das mensagens.
+
+## 🚫 Dashboard não atualiza
+- Verifique se o backend Python está recebendo mensagens MQTT.
+- Abra o console do navegador (F12) e veja erros de **Socket.IO** ou **JavaScript**.
+
+## 💡 Luminosidade incorreta
+- Verifique se o cálculo da luminosidade está presente no código:
+
+```cpp
+ldr_percent = map(ldr_value_raw, 0, 4095, 0, 100);
+```
+
+## Confirme que o JSON enviado inclui o campo:
+
+```json
+"lum": ldr_percent
+```
+
+## 👨‍💻 Desenvolvedor / Contato
+**Gabriel Akira Borges Kiyohara — FIAP (1ESPJ)**  
+📧 E-mail: gakirakiyohara@gmail.com  
+🐙 GitHub: [Gakira06](https://github.com/Gakira06)
+
+**Gustavo Francisco Santos — FIAP (1ESPJ)**  
+📧 E-mail: gst.santos01@gmail.com  
+🐙 GitHub: [gugasantos24](https://github.com/gugasantos24)
+
+**Mauro Carlos — FIAP (1ESPJ)**
+
+## 📄 Licença
+Este projeto foi desenvolvido para fins acadêmicos.  
+Uso e modificação são permitidos dentro deste contexto.  
+Distribuição ou uso comercial não autorizado é proibido.
+
+© 2025 Gabriel Akira Borges Kiyohara

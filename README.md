@@ -1,8 +1,5 @@
 # 🍷 Vinheria Agnello IoT Monitor: Adega Inteligente 🌡️💧💡
 
-<p align="center">
-  <img src="https://i.imgur.com/your-image-url.png" alt="Montagem do Projeto IoT Vinheria Agnello" width="700"/>
-</p>
 
 **Tagline:** _Monitoramento em tempo real de temperatura, umidade e luz para garantir a qualidade perfeita dos seus vinhos._
 
@@ -52,9 +49,9 @@ Este projeto foi desenvolvido como parte das atividades acadêmicas na **FIAP**,
 ## 📸 Telas (Exemplos)
 
 - **Montagem no Wokwi:** Visualização da conexão dos componentes na simulação.
-  <img src="https://i.imgur.com/your-wokwi-image.png" alt="Simulação do Projeto no Wokwi" width="700"/>
+  <img src="./img/workiwi.png" alt="Simulação do Projeto no Wokwi" width="700"/>
 - **Dashboard Web:** Como os dados são exibidos no navegador.
-  <img src="https://i.imgur.com/your-dashboard-image.png" alt="Dashboard Web com dados dos sensores" width="700"/>
+  <img src="./img/dashboard.png" alt="Dashboard Web com dados dos sensores" width="700"/>
 
 > **Nota:** Substitua as URLs de exemplo (`https://i.imgur.com/...`) pelos links das suas próprias imagens.
 

@@ -1,0 +1,8 @@
+# Dependências do projeto listener.py
+
+# Framework web para Python
+Flask
+# Integração de WebSockets com Flask
+Flask-SocketIO
+# Cliente MQTT para Python
+paho-mqtt
